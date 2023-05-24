@@ -1,13 +1,26 @@
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Main {
     private static Map<Integer, Integer> distribution;
     private static int sum;
+
+    private static int amountGames = 20;
+    private static int sampleSize = 1000000;
     private static double rtp = 6.9;
 
     public static void main(String[] args) {
+        fillDistribution();
+        double m = 0;
+        for (int k = 0; k < sampleSize; k++) {
+            if (getRTP() >= rtp) {
+                m++;
+            }
+        }
+        System.out.println(m / sampleSize);
+    }
+
+    private static void fillDistribution() {
         distribution = new HashMap<>();
         distribution.put(0, 1403);
         distribution.put(1, 321);
@@ -21,25 +34,6 @@ public class Main {
         for (int i : distribution.keySet()) {
             sum += distribution.get(i);
         }
-        ArrayList<Integer> statistics = new ArrayList<>();
-        for (int i = 0; i < 10000000; i++) {
-            statistics.add(getGame());
-        }
-        double good = 0;
-        for (int k = 0; k < 1000000; k++) {
-            ArrayList<Integer> indexes = new ArrayList<>();
-            for (int i = 0; i < 20; i++) {
-                int rnd;
-                do {
-                    rnd = (int) (Math.random() * 1000000);
-                } while (indexes.contains(rnd));
-                indexes.add(rnd);
-            }
-            if (getRTP(statistics, indexes) >= rtp) {
-                good++;
-            }
-        }
-        System.out.println(good / 1000000);
     }
 
     private static int getGame() {
@@ -54,12 +48,12 @@ public class Main {
         return 0;
     }
 
-    private static double getRTP(ArrayList<Integer> statistics, ArrayList<Integer> indexes) {
+    private static double getRTP() {
         double rtp = 0;
-        for (int i : indexes) {
-            rtp += statistics.get(i);
+        for (int i = 0; i < amountGames; i++) {
+            rtp += getGame();
         }
-        rtp /= 20;
+        rtp /= amountGames;
         return rtp;
     }
 }
